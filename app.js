@@ -34,21 +34,27 @@ A linha de baixo faz a mesma coisa dessa comentada
 
 app.use(express.static('public'));
 
+var blocks = {
+    'Fixed': 'Fastened securely in position',
+    'Movable': 'Capable of being moved',
+    'Rotating': 'Moving in a circle around its center',
+}
+
 app.get('/blocks', function(request, response) {
-    var blocks = ['Fixed', 'Movable', 'Rotating'];
     if (request.query.limit >=0) {
-        response.json(blocks.slice(0, request.query.limit));
+        response.json(Object.keys(blocks).slice(0, request.query.limit));
     } else {
-        response.json(blocks);
+        response.json(Object.keys(blocks));
     }
 });
 
 app.get('/blocks/:name', function(request, response) {
-    var blocks = ['Fixed', 'Movable', 'Rotating'];
-    if (request.query.limit >=0) {
-        response.json(blocks.slice(0, request.query.limit));
+    var block = request.params.name[0].toUpperCase() + request.params.name.slice(1).toLowerCase();
+    var description = blocks[block];
+    if(!description) {
+        response.status(404).json('No description found for ' + request.params.name)
     } else {
-        response.json(blocks);
+        response.json(description);
     }
 });
 
